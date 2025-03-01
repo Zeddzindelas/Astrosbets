@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roleta Estelar</title>
+    <style>
+        /* Reset básico */
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+            color: #fff;
+            text-align: center;
+        }
+
+        /* Vídeo de fundo */
+        #video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Cobrir toda a tela */
+            z-index: -1; /* Colocar atrás de todo o conteúdo */
+        }
+
+        /* Botão para ativar/desativar vídeo */
+        #toggle-video {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background: #00ffcc;
+            color: #000;
+            border: none;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 999;
+        }
+
+        header h1 {
+            font-size: 3rem;
+            margin: 0;
+            color: #00ffcc;
+            text-shadow: 0 0 10px #00ffcc, 0 0 20px #00ffcc;
+        }
+
+        /* Saldo */
+        .saldo {
+            position: fixed;
+            top: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.5rem;
+            color: #00ffcc;
+            z-index: 999;
+        }
+
+        .saldo span {
+            display: inline-block;
+            position: relative;
+        }
+
+        .saldo .arrow {
+            position: absolute;
+            right: -20px;
+            font-size: 1rem;
+            opacity: 0;
+            transition: opacity 0.5s, transform 0.5s;
+        }
+
+        .saldo .arrow.up {
+            color: #00ffcc;
+            transform: translateY(-20px);
+        }
+
+        .saldo .arrow.down {
+            color: #ff4444;
+            transform: translateY(20px);
+        }
+
+        /* Container do jogo */
+        .game-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 2;
+        }
+
+        .game-container h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #00ffcc;
+            text-shadow: 0 0 10px #00ffcc, 0 0 20px #00ffcc;
+        }
+
+        .game-container p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+
+        .game-container button {
+            background: #00ffcc;
+            color: #000;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background 0.3s, transform 0.3s;
+        }
+
+        .game-container button:hover {
+            background: #00ccaa;
+            transform: scale(1.1);
+        }
+
+        /* Roleta */
+        .roleta {
+            font-size: 3rem;
+            margin-bottom: 30px;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Footer */
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 999;
+        }
+
+        footer p {
+            margin: 0;
+            font-size: 1rem;
+        }
+
+        footer a {
+            color: #00ffcc;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+    header h1 {
+        font-size: 2rem;
+    }
+
+    .saldo {
+        font-size: 1.2rem;
+    }
+
+    .game-container h2 {
+        font-size: 2rem;
+    }
+
+    .game-container p {
+        font-size: 1rem;
+    }
+
+    .game-container button {
+        padding: 10px 20px;
+        font-size: 1rem;
+    }
+}
+    </style>
+</head>
+<body>
+    <!-- Wallpaper em Vídeo -->
+    <video id="video-background" autoplay muted loop>
+        <source src="cosmic.mp4" type="video/mp4">
+        Seu navegador não suporta vídeos HTML5.
+    </video>
+
+    <!-- Botão para Ativar/Desativar Vídeo -->
+    <button id="toggle-video" onclick="toggleVideo()">Desativar Vídeo</button>
+
+    <!-- Conteúdo Principal -->
+    <header>
+        <h1>Roleta Estelar</h1>
+    </header>
+
+    <div class="saldo" id="saldo">
+        Saldo: R$ <span id="saldo-valor">900</span>
+        <span class="arrow up">↑</span>
+        <span class="arrow down">↓</span>
+    </div>
+
+    <div class="game-container">
+        <h2>Faça suas apostas!</h2>
+        <p>Escolha um número e aposte suas fichas.</p>
+        <div class="roleta" id="roleta">🎰</div>
+        <button onclick="jogarRoleta()">Girar Roleta</button>
+        <p id="resultado"></p>
+    </div>
+
+    <footer>
+        <p>&copy; 2023 Cassino Cósmico. Todos os direitos reservados.</p>
+        <p><a href="index.html">Voltar ao Início</a></p>
+    </footer>
+
+    <script>
+        // Sistema de saldo (persistente entre páginas)
+        let saldo = localStorage.getItem('saldo') || 900;
+        document.getElementById('saldo-valor').textContent = saldo;
+
+        // Botão para Ativar/Desativar Vídeo
+        function toggleVideo() {
+            const video = document.getElementById('video-background');
+            const button = document.getElementById('toggle-video');
+            if (video.paused) {
+                video.play();
+                button.textContent = "Desativar Vídeo";
+            } else {
+                video.pause();
+                button.textContent = "Ativar Vídeo";
+            }
+        }
+
+        // Animação de saldo
+        function atualizarSaldo(valor) {
+            const saldoElement = document.getElementById('saldo-valor');
+            const arrowUp = document.querySelector('.saldo .arrow.up');
+            const arrowDown = document.querySelector('.saldo .arrow.down');
+
+            saldo += valor;
+            localStorage.setItem('saldo', saldo);
+            saldoElement.textContent = saldo;
+
+            if (valor > 0) {
+                arrowUp.style.opacity = '1';
+                arrowUp.style.transform = 'translateY(-20px)';
+                setTimeout(() => {
+                    arrowUp.style.opacity = '0';
+                    arrowUp.style.transform = 'translateY(0)';
+                }, 1000);
+            } else {
+                arrowDown.style.opacity = '1';
+                arrowDown.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    arrowDown.style.opacity = '0';
+                    arrowDown.style.transform = 'translateY(0)';
+                }, 1000);
+            }
+        }
+
+        // Jogar Roleta
+        function jogarRoleta() {
+            if (saldo < 10) {
+                alert("Saldo insuficiente! Volte ao início para recarregar.");
+                return;
+            }
+
+            saldo -= 10; // Custa R$ 10 para jogar
+            atualizarSaldo(-10);
+
+            const roleta = document.getElementById('roleta');
+            const resultado = document.getElementById('resultado');
+
+            roleta.style.animation = 'spin 2s linear';
+            setTimeout(() => {
+                roleta.style.animation = 'none';
+                const numeroSorteado = Math.floor(Math.random() * 37); // Números de 0 a 36
+                resultado.textContent = `Número sorteado: ${numeroSorteado}`;
+                resultado.style.color = "#00ffcc";
+                resultado.style.fontSize = "1.5rem";
+                resultado.style.marginTop = "20px";
+
+                if (numeroSorteado % 2 === 0) { // Exemplo simples: ganha se for par
+                    saldo += 20; // Ganha R$ 20
+                    atualizarSaldo(20);
+                    resultado.textContent += " - Você ganhou R$ 20! 🎉";
+                } else {
+                    resultado.textContent += " - Você perdeu R$ 10. 😢";
+                }
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

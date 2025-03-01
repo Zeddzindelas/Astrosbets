@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comentários - Cassino Cósmico</title>
+    <style>
+        /* Reset CSS */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            color: #fff;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Wallpaper em Vídeo */
+        #video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+
+        /* Botão para Ativar/Desativar Vídeo */
+        #toggle-video {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #00ffcc;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 5px;
+            z-index: 100;
+        }
+
+        /* Conteúdo Principal */
+        header {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            position: relative;
+            z-index: 2;
+        }
+
+        header h1 {
+            font-size: 3rem;
+            margin: 0;
+            color: #00ffcc;
+            text-shadow: 0 0 10px #00ffcc, 0 0 20px #00ffcc;
+        }
+
+        .comentarios-container {
+            padding: 50px 20px;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .comentarios-container h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #00ffcc;
+            text-shadow: 0 0 10px #00ffcc, 0 0 20px #00ffcc;
+        }
+
+        .comentarios-container p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+
+        .comentarios-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .comentario {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #00ffcc;
+            text-align: left;
+        }
+
+        .comentario h3 {
+            font-size: 1.5rem;
+            color: #00ffcc;
+            margin-bottom: 10px;
+        }
+
+        .comentario p {
+            font-size: 1rem;
+            color: #fff;
+        }
+
+        .formulario-comentario {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .formulario-comentario input,
+        .formulario-comentario textarea {
+            padding: 10px;
+            border: 2px solid #00ffcc;
+            border-radius: 5px;
+            background: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .formulario-comentario textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .formulario-comentario button {
+            background: #00ffcc;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background 0.3s, transform 0.3s;
+        }
+
+        .formulario-comentario button:hover {
+            background: #00ccaa;
+            transform: scale(1.05);
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            margin-top: 50px;
+            position: relative;
+            z-index: 2;
+        }
+
+        footer p {
+            margin: 0;
+            font-size: 1rem;
+        }
+
+        footer a {
+            color: #00ffcc;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+    header h1 {
+        font-size: 2rem;
+    }
+
+    .comentarios-container h2 {
+        font-size: 2rem;
+    }
+
+    .comentarios-container p {
+        font-size: 1rem;
+    }
+
+    .comentario h3 {
+        font-size: 1.2rem;
+    }
+
+    .comentario p {
+        font-size: 0.9rem;
+    }
+
+    .formulario-comentario input,
+    .formulario-comentario textarea {
+        font-size: 0.9rem;
+    }
+
+    .formulario-comentario button {
+        font-size: 1rem;
+    }
+}
+    </style>
+</head>
+<body>
+    <!-- Wallpaper em Vídeo -->
+    <video id="video-background" autoplay muted loop>
+        <source src="cosmic.mp4" type="video/mp4">
+        Seu navegador não suporta vídeos HTML5.
+    </video>
+
+    <!-- Botão para Ativar/Desativar Vídeo -->
+    <button id="toggle-video" onclick="toggleVideo()">Desativar Vídeo</button>
+
+    <!-- Conteúdo Principal -->
+    <header>
+        <h1>Comentários</h1>
+    </header>
+
+    <div class="comentarios-container">
+        <h2>O que os usuários estão dizendo:</h2>
+        <div class="comentarios-list" id="comentarios-list">
+            <!-- Comentários serão adicionados aqui dinamicamente -->
+            <div class="comentario">
+                <h3>João Silva</h3>
+                <p>Adorei o site! Os jogos são muito divertidos e o design é incrível. 👏</p>
+            </div>
+            <div class="comentario">
+                <h3>Maria Oliveira</h3>
+                <p>O Cassino Cósmico é viciante! Já perdi a noção do tempo jogando. 😅</p>
+            </div>
+            <div class="comentario">
+                <h3>Carlos Souza</h3>
+                <p>O wallpaper em vídeo dá um toque especial ao site. Parabéns! 🚀</p>
+            </div>
+            <div class="comentario">
+                <h3>Ana Costa</h3>
+                <p>Os efeitos sonoros e as animações são sensacionais. Recomendo! 🌟</p>
+            </div>
+        </div>
+
+        <!-- Formulário de Comentários -->
+        <div class="formulario-comentario">
+            <h2>Deixe seu comentário:</h2>
+            <input type="text" id="nome" placeholder="Seu nome" required>
+            <textarea id="comentario" placeholder="Seu comentário" required></textarea>
+            <button onclick="adicionarComentario()">Enviar Comentário</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2023 Cassino Cósmico. Todos os direitos reservados.</p>
+        <p><a href="index.html">Voltar ao Início</a></p>
+    </footer>
+
+    <script>
+        // Botão para Ativar/Desativar Vídeo
+        function toggleVideo() {
+            const video = document.getElementById('video-background');
+            const button = document.getElementById('toggle-video');
+            if (video.paused) {
+                video.play();
+                button.textContent = "Desativar Vídeo";
+            } else {
+                video.pause();
+                button.textContent = "Ativar Vídeo";
+            }
+        }
+
+        // Adicionar Comentário
+        function adicionarComentario() {
+            const nome = document.getElementById('nome').value;
+            const comentario = document.getElementById('comentario').value;
+
+            if (!nome || !comentario) {
+                alert("Por favor, preencha todos os campos.");
+                return;
+            }
+
+            const comentariosList = document.getElementById('comentarios-list');
+            const novoComentario = document.createElement('div');
+            novoComentario.classList.add('comentario');
+            novoComentario.innerHTML = `
+                <h3>${nome}</h3>
+                <p>${comentario}</p>
+            `;
+
+            comentariosList.prepend(novoComentario); // Adiciona no topo da lista
+
+            // Limpa os campos do formulário
+            document.getElementById('nome').value = '';
+            document.getElementById('comentario').value = '';
+        }
+    </script>
+</body>
+</html>

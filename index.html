@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cassino Cósmico</title>
+    <style>
+        /* Reset CSS */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            color: #fff;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Tela de Carregamento */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000428;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: fadeOut 6s forwards;
+        }
+
+        @keyframes fadeOut {
+            0% { opacity: 1; }
+            100% { opacity: 0; display: none; }
+        }
+
+        #loading-screen h1 {
+            font-size: 3rem;
+            color: #00ffcc;
+            text-shadow: 0 0 10px #00ffcc, 0 0 20px #00ffcc;
+        }
+
+        /* Wallpaper em Vídeo */
+        #video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+
+        /* Botão para Ativar/Desativar Vídeo */
+        #toggle-video {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #00ffcc;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 5px;
+            z-index: 100;
+        }
+
+        /* Conteúdo Principal */
+        header {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            position: relative;
+            z-index: 2;
+        }
+
+        header h1 {
+            font-size: 3rem;
+            margin: 0;
+            color: #00ffcc;
+            text-shadow: 0 0 10px #00ffcc, 0 0 20px #00ffcc;
+        }
+
+        .saldo {
+            text-align: center;
+            font-size: 1.5rem;
+            margin: 20px 0;
+            color: #00ffcc;
+            position: relative;
+        }
+
+        .saldo span {
+            display: inline-block;
+            position: relative;
+        }
+
+        .saldo .arrow {
+            position: absolute;
+            right: -20px;
+            font-size: 1rem;
+            opacity: 0;
+            transition: opacity 0.5s, transform 0.5s;
+        }
+
+        .saldo .arrow.up {
+            color: #00ffcc;
+            transform: translateY(-20px);
+        }
+
+        .saldo .arrow.down {
+            color: #ff4444;
+            transform: translateY(20px);
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            position: relative;
+            z-index: 2;
+        }
+
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 1.2rem;
+            transition: color 0.3s, transform 0.3s;
+        }
+
+        nav a:hover {
+            color: #00ffcc;
+            transform: scale(1.1);
+        }
+
+        .game-section {
+            padding: 50px 20px;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .game-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #00ffcc;
+            text-shadow: 0 0 10px #00ffcc, 0 0 20px #00ffcc;
+        }
+
+        .game-section p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+
+        .game-section button {
+            background: #00ffcc;
+            color: #000;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background 0.3s, transform 0.3s;
+            position: relative;
+            z-index: 2;
+        }
+
+        .game-section button:hover {
+            background: #00ccaa;
+            transform: scale(1.1);
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            margin-top: 50px;
+            position: relative;
+            z-index: 2;
+        }
+
+        footer p {
+            margin: 0;
+            font-size: 1rem;
+        }
+
+        footer a {
+            color: #00ffcc;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Modal de Depósito */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: #000428;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .modal-content h2 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #00ffcc;
+        }
+
+        .modal-content label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .modal-content input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #00ffcc;
+            border-radius: 5px;
+            background: #000;
+            color: #fff;
+        }
+
+        .modal-content button {
+            background: #00ffcc;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 5px;
+            margin: 5px;
+        }
+
+        .modal-content button:hover {
+            background: #00ccaa;
+        }
+
+        .modal-content .pix-warning {
+            color: #ff4444;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+
+        .card-form {
+            display: none;
+        }
+
+        .card-form.active {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+    header h1 {
+        font-size: 2rem;
+    }
+
+    .saldo {
+        font-size: 1.2rem;
+    }
+
+    nav {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    nav a {
+        margin: 10px 0;
+        font-size: 1rem;
+    }
+
+    .game-section h2 {
+        font-size: 2rem;
+    }
+
+    .game-section p {
+        font-size: 1rem;
+    }
+
+    .game-section button {
+        padding: 10px 20px;
+        font-size: 1rem;
+    }
+
+    #toggle-video {
+        top: 10px;
+        right: 10px;
+        padding: 8px 16px;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    header h1 {
+        font-size: 1.5rem;
+    }
+
+    .saldo {
+        font-size: 1rem;
+    }
+
+    .game-section h2 {
+        font-size: 1.5rem;
+    }
+
+    .game-section p {
+        font-size: 0.9rem;
+    }
+
+    .game-section button {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+    }
+
+    #toggle-video {
+        top: 5px;
+        right: 5px;
+        padding: 6px 12px;
+        font-size: 0.8rem;
+    }
+}
+    </style>
+</head>
+<body>
+    <!-- Tela de Carregamento -->
+    <div id="loading-screen">
+        <h1>Cassino Cósmico</h1>
+    </div>
+
+    <!-- Wallpaper em Vídeo -->
+    <video id="video-background" autoplay muted loop>
+        <source src="cosmic.mp4" type="video/mp4">
+        Seu navegador não suporta vídeos HTML5.
+    </video>
+
+    <!-- Botão para Ativar/Desativar Vídeo -->
+    <button id="toggle-video" onclick="toggleVideo()">Desativar Vídeo</button>
+
+    <!-- Conteúdo Principal -->
+    <header>
+        <h1>Cassino Cósmico</h1>
+    </header>
+
+    <div class="saldo" id="saldo">
+        Saldo: R$ <span id="saldo-valor">900</span>
+        <span class="arrow up">↑</span>
+        <span class="arrow down">↓</span>
+        <button onclick="openDepositModal()" style="margin-left: 10px; background: #00ffcc; color: #000; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">Depositar</button>
+    </div>
+
+    <nav>
+        <a href="roleta.html">Roleta Estelar</a>
+        <a href="caça-niqueis.html">Máquina de Caça-Níqueis Cósmica</a>
+        <a href="blackjack.html">Blackjack Galáctico</a>
+        <a href="dados.html">Dados Cósmicos</a>
+        <a href="poker.html">Pôquer Estelar</a>
+        <a href="comentarios.html">Comentários</a>
+    </nav>
+
+    <section id="roleta" class="game-section">
+        <h2>Roleta Estelar</h2>
+        <p>Gire a roleta e descubra seu destino entre as estrelas!</p>
+        <button onclick="window.location.href='roleta.html'">Jogar Agora</button>
+    </section>
+
+    <section id="caça-niqueis" class="game-section">
+        <h2>Máquina de Caça-Níqueis Cósmica</h2>
+        <p>Alinhe os símbolos cósmicos e ganhe prêmios estelares!</p>
+        <button onclick="window.location.href='caça-niqueis.html'">Jogar Agora</button>
+    </section>
+
+    <section id="blackjack" class="game-section">
+        <h2>Blackjack Galáctico</h2>
+        <p>Desafie o dealer em uma batalha intergaláctica de cartas!</p>
+        <button onclick="window.location.href='blackjack.html'">Jogar Agora</button>
+    </section>
+
+    <section id="dados" class="game-section">
+        <h2>Dados Cósmicos</h2>
+        <p>Role os dados e ganhe prêmios intergalácticos!</p>
+        <button onclick="window.location.href='dados.html'">Jogar Agora</button>
+    </section>
+
+    <section id="poker" class="game-section">
+        <h2>Pôquer Estelar</h2>
+        <p>Desafie outros jogadores em uma partida de pôquer cósmico!</p>
+        <button onclick="window.location.href='poker.html'">Jogar Agora</button>
+    </section>
+
+    <footer>
+        <p>&copy; 2023 Cassino Cósmico. Todos os direitos reservados.</p>
+        <p><a href="#">Política de Privacidade</a> | <a href="#">Termos de Serviço</a></p>
+    </footer>
+
+    <!-- Modal de Depósito -->
+    <div id="depositModal" class="modal">
+        <div class="modal-content">
+            <h2>Depositar Saldo</h2>
+            <label for="amount">Valor a Depositar:</label>
+            <input type="number" id="amount" placeholder="R$ 0,00" min="0">
+
+            <label for="paymentMethod">Forma de Pagamento:</label>
+            <select id="paymentMethod" onchange="togglePaymentForm()">
+                <option value="creditCard">Cartão de Crédito</option>
+                <option value="pix">Pix</option>
+            </select>
+
+            <!-- Formulário de Cartão de Crédito -->
+            <div id="cardForm" class="card-form active">
+                <label for="cardNumber">Número do Cartão:</label>
+                <input type="text" id="cardNumber" placeholder="0000 0000 0000 0000">
+
+                <label for="cardName">Nome no Cartão:</label>
+                <input type="text" id="cardName" placeholder="Nome Completo">
+
+                <label for="cardExpiry">Validade:</label>
+                <input type="text" id="cardExpiry" placeholder="MM/AA">
+
+                <label for="cardCvv">CVV:</label>
+                <input type="text" id="cardCvv" placeholder="123">
+            </div>
+
+            <!-- Aviso de Pix -->
+            <p class="pix-warning" id="pixWarning" style="display: none;">Pix está em desenvolvimento. Por favor, escolha outra forma de pagamento.</p>
+
+            <button onclick="deposit()">Depositar</button>
+            <button onclick="closeDepositModal()">Cancelar</button>
+        </div>
+    </div>
+
+    <script>
+        // Sistema de saldo (persistente entre páginas)
+        let saldo = localStorage.getItem('saldo') || 900;
+        document.getElementById('saldo-valor').textContent = saldo;
+
+        // Tela de Carregamento
+        setTimeout(() => {
+            document.getElementById('loading-screen').style.display = 'none';
+        }, 4000);
+
+        // Botão para Ativar/Desativar Vídeo
+        function toggleVideo() {
+            const video = document.getElementById('video-background');
+            const button = document.getElementById('toggle-video');
+            if (video.paused) {
+                video.play();
+                button.textContent = "Desativar Vídeo";
+            } else {
+                video.pause();
+                button.textContent = "Ativar Vídeo";
+            }
+        }
+
+        // Animação de saldo
+        function atualizarSaldo(valor) {
+            const saldoElement = document.getElementById('saldo-valor');
+            const arrowUp = document.querySelector('.saldo .arrow.up');
+            const arrowDown = document.querySelector('.saldo .arrow.down');
+
+            saldo += valor;
+            localStorage.setItem('saldo', saldo);
+            saldoElement.textContent = saldo;
+
+            if (valor > 0) {
+                arrowUp.style.opacity = '1';
+                arrowUp.style.transform = 'translateY(-20px)';
+                setTimeout(() => {
+                    arrowUp.style.opacity = '0';
+                    arrowUp.style.transform = 'translateY(0)';
+                }, 1000);
+            } else {
+                arrowDown.style.opacity = '1';
+                arrowDown.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    arrowDown.style.opacity = '0';
+                    arrowDown.style.transform = 'translateY(0)';
+                }, 1000);
+            }
+        }
+
+        // Modal de Depósito
+        function openDepositModal() {
+            document.getElementById('depositModal').style.display = 'flex';
+        }
+
+        function closeDepositModal() {
+            document.getElementById('depositModal').style.display = 'none';
+        }
+
+        // Alternar entre formulário de cartão e aviso de Pix
+        function togglePaymentForm() {
+            const paymentMethod = document.getElementById('paymentMethod').value;
+            const cardForm = document.getElementById('cardForm');
+            const pixWarning = document.getElementById('pixWarning');
+
+            if (paymentMethod === 'creditCard') {
+                cardForm.style.display = 'block';
+                pixWarning.style.display = 'none';
+            } else {
+                cardForm.style.display = 'none';
+                pixWarning.style.display = 'block';
+            }
+        }
+
+        // Função de depósito
+        function deposit() {
+            const amount = parseFloat(document.getElementById('amount').value);
+            const paymentMethod = document.getElementById('paymentMethod').value;
+
+            // Verifica se o valor do depósito é válido
+            if (amount <= 0 || isNaN(amount)) {
+                alert("Por favor, insira um valor válido para depósito.");
+                return;
+            }
+
+            // Verifica se o método de pagamento é Pix
+            if (paymentMethod === 'pix') {
+                document.getElementById('pixWarning').style.display = 'block';
+                return;
+            }
+
+            // Verifica se os campos do cartão estão preenchidos (caso o método seja cartão de crédito)
+            if (paymentMethod === 'creditCard') {
+                const cardNumber = document.getElementById('cardNumber').value.trim();
+                const cardName = document.getElementById('cardName').value.trim();
+                const cardExpiry = document.getElementById('cardExpiry').value.trim();
+                const cardCvv = document.getElementById('cardCvv').value.trim();
+
+                if (!cardNumber || !cardName || !cardExpiry || !cardCvv) {
+                    alert("Por favor, preencha todos os campos do cartão de crédito.");
+                    return;
+                }
+            }
+
+            // Se tudo estiver válido, atualiza o saldo
+            atualizarSaldo(amount);
+            closeDepositModal();
+        }
+    </script>
+</body>
+</html>
